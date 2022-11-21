@@ -5,7 +5,7 @@
         <th>f(x<sub>i</sub>)</th>
       </tr>
       <tr v-for="i in (n_data + 1)" v-bind:key="i">
-        <td><input v-for="j in (n_trat + 1)" v-bind:key="j" type="text" name="fs{{(i-1)}}{{(j-1)}}" id="fs{{(i-1)}}{{(j-1)}}" v-model.number="fs[(i-1)][(j-1)]"></td>
+        <td><input v-for="j in (n_trat + 1)" v-bind:key="j" type="number" name="fs{{(i-1)}}{{(j-1)}}" id="fs{{(i-1)}}{{(j-1)}}" v-model.number="fs[(i-1)][(j-1)]"></td>
       </tr>
     </table>
     <br>
@@ -23,7 +23,7 @@
         <td>{{ this.dfb }}</td>
         <td>{{ this.Sqb }}</td>
         <td>{{ this.f_calc }}</td>
-        <td>{{ this.f_table }}</td>
+        <td>{{ this.p_value }}</td>
       <tr>
         <td>Residual (unexplained)</td>
         <td>{{ this.SSw }}</td>
@@ -37,11 +37,15 @@
       </tr>
     </table>
     <br>
+    &alpha; = <input type="number" name="significance" id="significance" placeholder="significance" v-model.number="significance">
+    <br>
     <button v-on:click="increase_data()">Agregar dato</button>
     <button v-on:click="decrease_data()">Eliminar dato</button>
     <button v-on:click="increase_trat()">Agregar tratamiento</button>
     <button v-on:click="decrease_trat()">Eliminar tratamiento</button>
     <button v-on:click="solve()">Calcular</button>
+    <br>
+    <p>Resultado: {{ this.result }}</p>
   </div>
 </template>
 
@@ -70,9 +74,10 @@ export default {
       dfb: 0,
       dfw: 0,
       dft: 0,
-      f_table: 0,
+      p_value: 0,
       f_calc: 0,
       significance: 0.05,
+      result: ""
     };
   },
   methods: {
@@ -128,11 +133,17 @@ export default {
       this.Sqb = (this.SSb/this.dfb).round(3)
       this.Sqw = (this.SSw/this.dfw).round(3)
       this.f_calc = (this.Sqb/this.Sqw).round(3)
-      this.f_table = this.fdist(this.f_calc, this.dfb, this.dfw).round(3)
+      this.p_value = this.fdist(this.f_calc, this.dfb, this.dfw).round(3)
 
       console.log(this.SSb, this.SSw, this.SSt);
       console.log(this.dfb, this.dfw, this.dft);
-      console.log(this.f_table)
+      console.log(this.p_value)
+
+      if (this.p_value > this.significance) {
+        this.result = "Se acepta la hipotesis nula, no hay diferencia estadisticamente signficativa entre las medias."
+      } else {
+        this.result = "Se rechaza la hipotesis nula, al menos una de las medias es distinta al resto."
+      }
     }
   },
 };
@@ -146,5 +157,17 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin: 60px;
+}
+
+th, td {
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+th {
+  background-color: #F1A380;
+}
+
+td {
+  background-color: #96D4D4;
 }
 </style>
