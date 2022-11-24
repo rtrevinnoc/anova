@@ -11,27 +11,27 @@
     <br>
     <table>
       <tr>
-        <td>Source of Variation</td>
-        <td>Sum of Squares</td>
-        <td>df</td>
-        <td>Mean Square</td>
+        <td>Fuente de variación</td>
+        <td>Suma de cuadrados</td>
+        <td>Grados de libertad</td>
+        <td>Cuadrado medio</td>
         <td>F</td>
-        <td>P</td>
+        <td>p</td>
       </tr>
-        <td>Regression (explained)</td>
+        <td>Tratamientos</td>
         <td>{{ this.SSb }}</td>
         <td>{{ this.dfb }}</td>
         <td>{{ this.Sqb }}</td>
         <td>{{ this.f_calc }}</td>
         <td>{{ this.p_value }}</td>
       <tr>
-        <td>Residual (unexplained)</td>
+        <td>Errores</td>
         <td>{{ this.SSw }}</td>
         <td>{{ this.dfw }}</td>
         <td>{{ this.Sqw }}</td>
       </tr>
       <tr>
-        <td>Total</td>
+        <td>Totales</td>
         <td>{{ this.SSt }}</td>
         <td>{{ this.dft }}</td>
       </tr>
@@ -122,8 +122,8 @@ export default {
     },
     solve() {
       this.n = (this.n_data + 1) * (this.n_trat + 1);
-      this.dfb = (this.n_data + 1) - 1;
-      this.dfw = this.n - (this.n_data + 1);
+      this.dfb = (this.n_trat + 1) - 1;
+      this.dfw = this.n - (this.n_trat + 1);
       this.dft = this.dfb + this.dfw;
       this.avgs = this.fs[0].map((col, i) => (this.fs.map(row => row[i]).reduce((acc, c) => acc + c, 0) / this.fs.length).round(3));
       this.avg = (this.avgs.reduce((acc, x) => acc + x) / this.avgs.length).round(3)
@@ -135,6 +135,7 @@ export default {
       this.f_calc = (this.Sqb/this.Sqw).round(3)
       this.p_value = this.fdist(this.f_calc, this.dfb, this.dfw).round(3)
 
+      console.log(this.n, (this.n_data + 1), (this.n_trat + 1))
       console.log(this.SSb, this.SSw, this.SSt);
       console.log(this.dfb, this.dfw, this.dft);
       console.log(this.p_value)
